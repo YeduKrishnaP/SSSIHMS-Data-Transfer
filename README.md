@@ -7,7 +7,7 @@ User enters the Path of the Source and Target folders for the backup program in 
 [Main script](https://github.com/YeduKrishnaP/SSSIHMS-Data-Transfer/blob/main/(latest)%20Tranfer%20Script%20for%20IHMS.py) is set up as a recurring task using the Windows Task manager, which reads the links from the Paths file and calls a recursive function that copies the files of the previous day into the Target under the same folder name.
 
 
-Dependencies: Shutil, OS, PySimpleGUI
+Dependencies: `Shutil`, `OS`, `PySimpleGUI`
 
 ### To do:
 - [x] Happy Path and Minimum Viable Product
