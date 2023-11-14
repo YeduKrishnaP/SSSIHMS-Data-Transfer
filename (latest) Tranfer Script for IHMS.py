@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import shutil
 from datetime import date, timedelta
@@ -7,37 +5,41 @@ import PySimpleGUI as sg
 
 from time import time
 
-
-#-----------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Init the variables etc.
 
-"""if not os.path.exists("Paths.bin"):
-     # code to handle """
+if not os.path.exists("Paths.bin"):
+    sg.theme('DarkAmber')
+
+    layout = [[sg.Text('Please run the EditTransferPaths.exe first!')]]
+    PathFileError = sg.Window('Automated Data Transfer', layout)
+
+    while True:
+        event, values = PathFileError.read()
+        if event in(sg.WIN_CLOSED, 'Ok'): # if user closes window or clicks close
+                break
+
+    PathFileError.close()
+    exit(1)
+
 
 with open("Paths.bin", "r") as f:
     PATHS = f.readlines()
 
 SOURCE = PATHS[0].replace("\\", "/").strip()    # Read existing paths in the file
-TARGET = PATHS[1].replace("\\", "/").strip() 
+TARGET = PATHS[1].replace("\\", "/").strip()
+CHKDAYS = int(PATHS[2].strip())      # Read the no. of days to check for
 
-t = str(date.today() - timedelta(days = 1))     # convert the dates to required format
-TARGET_DATE = t[5:7] + t[8:] + t[:4]            # (mmddyyyy) - format in which IHMS stores files
-#print(f"Target date in format: {TARGET_DATE}\t\t{t}")
+DATE_CHK_LIST = list()
 
-p = str(date.today() - timedelta(days = 2))
-PREV_DATE = p[5:7] + p[8:] + p[:4]
-#print(f"Previous date in format: {PREV_DATE}\t{p}")
+for i in range(1, CHKDAYS+2):
+    p = str(date.today() - timedelta(days = i))           # convert the dates to required format
+    DATE_CHK_LIST.append(p[5:7] + p[8:] + p[:4])          # (mmddyyyy) - format in which IHMS stores files
 
-present_dir = SOURCE + "/" + TARGET_DATE + "/"
-prev_src = SOURCE + "/" + PREV_DATE + "/"
-prev_tar = TARGET + "/" + PREV_DATE + "/"
-tar_dir = TARGET + "/" + TARGET_DATE + "/"
 
 n_copies = 0
 
-print(present_dir, tar_dir, prev_src, prev_tar, sep = "\n\n")
-
-#-----------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def compare_transfer_recursively(src, target): #(tested, working)
     """
@@ -48,64 +50,58 @@ def compare_transfer_recursively(src, target): #(tested, working)
          os.walk       : used here to get the subdirs in dir
 
     Then call the function to on each subdir
-
     """
     
-    print("-----------------------------------------------------------------------------")
-    print(f"Source: {src}\ntarget: {target}")
     if not os.path.exists(target):  # If target folder doesnt exist, create
-        print(f"Creating folder: {target}")
         os.mkdir(target)
-
+  
     global n_copies
-    print("\n\n")
 
     src_files = os.listdir(src)
     tar_files = os.listdir(target)
-    for f in src_files: # iterate through files in SRC 
-        if f not in tar_files and os.path.isfile(src + f): # Chk if the file is not in TAR
-                #print(f"Copying pending: \n{src + f} \n | \n{target + f}\n\n")
-                shutil.copy2(src + f, target + f)
+    for f in src_files:      # iterate through files in SRC 
+        if f not in tar_files and os.path.isfile(src + f):      # Chk if the file is not in TAR
+                try:
+                    shutil.copy2(src + f, target + f)
+                except:
+                    sg.popup(f"Unable to copy the file: {f} in {src} folder!")
                 n_copies += 1
 
     subdirs = next(os.walk(src))[1] #gives a list of immediate subdirectories
-    print(f"Subdirectories found: {subdirs}")
-    print(f"\n\nNo. of completed transfers from current directory: {n_copies}\n\n")
     for sub in subdirs:
         compare_transfer_recursively(src + sub + "/", target + sub + "/")
 
-#-----------------------------------------------------------------------------
-# Call the function for yesterday and day-before's files
-
-start = time()
-compare_transfer_recursively(prev_src, prev_tar)
-
-compare_transfer_recursively(present_dir, tar_dir)
-end = time()
-
-
-#------------------------------------------------------------------------------
-# The Interface to notify transfer is complete
-# Need to change this to show exceptions etc
-
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Window to notify transfer has begun
 
 sg.theme('DarkAmber')
-
-
-layout = [  [sg.Text('Successfully completed the transfer for today')],
+layout = [  [sg.Text('Transferring files!')],
             [sg.Text('Source Folder:       '), sg.Text(SOURCE)],
             [sg.Text('Destination Folder: '), sg.Text(TARGET)],
             [],
-            [sg.Text(f'No. of transfers completed: {n_copies} in {end - start:.3f} sec')],
-            [sg.Text('{Add option for checking upto given date etc}')],
-            [sg.Button('Ok')]
+            
+            [sg.Text('Checking upto date: '), sg.Text(DATE_CHK_LIST[-1])],
         ]
 
-window = sg.Window('Automated Data Transfer', layout)
+MainWindow = sg.Window('Automated Data Transfer', layout)
+MainWindow.read(timeout = 1)
 
-while True:
-    event, values = window.read()
-    if event in(sg.WIN_CLOSED, 'Ok'): # if user closes window or clicks close
-        break
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Loop to call the compare_transfer_recursively() functn on all files (Main loop ig)
+
+start = time()
+
+for date in DATE_CHK_LIST:
+    SRC_DATE = SOURCE + "/" + date + "/"
+    TAR_DATE = TARGET + "/" + date + "/"
+    compare_transfer_recursively(SRC_DATE, TAR_DATE)
+     
+end = time()
+
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# Popup to notify transfer is complete
+# Need to change this to show exceptions etc
+
+sg.popup(f"Transfer Complete! {n_copies} files in {end - start:.3f} sec", modal = True, keep_on_top = True)
     
-window.close()
+MainWindow.close()
