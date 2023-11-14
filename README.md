@@ -17,7 +17,7 @@ Dependencies: `Shutil`, `OS`, `PySimpleGUI`
 
 - [ ] Hardening
   - [ ] Exception handling for other cases (malicious input etc.)
-  - [ ] Logic for no. of days to check (Should it be given by user?)
+  - [x] Logic for no. of days to check (Given by user, Exceptions etc are handled)
   - [ ] Unit testing, End-to-end testing
   - [ ] Style check
   - [ ] Can the task be setup without the user doing it manually?
