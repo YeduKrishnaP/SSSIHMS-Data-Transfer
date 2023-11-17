@@ -9,6 +9,11 @@ User enters the Path of the Source and Target folders for the backup program in 
 
 Dependencies: `Shutil`, `OS`, `PySimpleGUI`
 
+Turns out a scheduled task that runs when the user is not logged in will be run in a separate environment by itself, which is hidden from the user.
+So, I came up with a Minimum Program that has no GUI and just executes the code with a logger facility.
+
+- [ ] Need to come up with a solution for GUI T_T
+
 ### To do:
 - [x] Happy Path and Minimum Viable Product
   - [x] Basic code to transfer current day files
@@ -23,5 +28,5 @@ Dependencies: `Shutil`, `OS`, `PySimpleGUI`
   - [ ] Can the task be setup without the user doing it manually?
   
 - [ ] Post GA
-  - [ ] Logging facility
+  - [x] Logging facility (Need to make it better)
   - [ ] REST API
