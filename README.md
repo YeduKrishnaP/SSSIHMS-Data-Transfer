@@ -25,8 +25,9 @@ So, I came up with a Minimum Program that has no GUI and just executes the code 
   - [x] Logic for no. of days to check (Given by user, Exceptions etc are handled)
   - [ ] Unit testing, End-to-end testing
   - [ ] Style check
-  - [ ] Can the task be setup without the user doing it manually?
+  - [ ] Can the task be setup without the user doing it manually? (currently trying out SCHTASKS)
   
 - [ ] Post GA
   - [x] Logging facility (Need to make it better)
+    - [ ] Email client for the logs (incase of a critical failure)
   - [ ] REST API
