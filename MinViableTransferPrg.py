@@ -67,7 +67,7 @@ def compare_transfer_recursively(src, target): #(tested, working)
 
     subdirs = next(os.walk(src))[1] #gives a list of immediate subdirectories
     for sub in subdirs:
-        log.debug(f"\t\t\t\n\nCalling recursion on {src + sub}\n\n")
+        log.debug(f"\t\t\tCalling recursion on {src + sub}\n\n")
         compare_transfer_recursively(src + sub + "/", target + sub + "/")
         
 #-----------------------------------------------------------------------------
