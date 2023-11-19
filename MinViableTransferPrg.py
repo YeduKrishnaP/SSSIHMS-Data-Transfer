@@ -2,6 +2,17 @@ import os
 import shutil
 from datetime import date, timedelta
 import logging as log
+from EmailClient import SendLogs
+
+"""
+SendLogs send a mail to the user depending on the following codes:
+    0 - successful completion
+    1 - Unable to find Paths.bin
+    2 - 
+    3 - Source Folder missing
+    4 - Unable to create target folder
+    5 - shutil.copy2 failed on file
+"""
 
 #-----------------------------------------------------------------------------
 #Init the variables etc.
@@ -15,18 +26,12 @@ log.info("Starting Program")
 try:
     with open("Paths.bin", "r") as f:
         PATHS = f.readlines()
+        SOURCE = PATHS[0].replace("\\", "/").strip()    # Read existing paths in the file
+        TARGET = PATHS[1].replace("\\", "/").strip()
+        CHKDAYS = int(PATHS[2].strip())                 # Read the no. of days to check for
 except:
-    log.error("Unable to open Paths.bin")
-    exit(1)
-
-try:
-    SOURCE = PATHS[0].replace("\\", "/").strip()    # Read existing paths in the file
-    TARGET = PATHS[1].replace("\\", "/").strip()
-    CHKDAYS = int(PATHS[2].strip())                 # Read the no. of days to check for
-    
-except:
-    log.error("Error in reading the data from Paths.bin")
-    exit(2)
+    log.error("Unable to read Paths.bin")
+    SendLogs(1)
     
 DATE_CHK_LIST = list()
 for i in range(1, CHKDAYS+1):
@@ -49,9 +54,17 @@ def compare_transfer_recursively(src, target): #(tested, working)
     """
 
     log.debug(f"\tCurrent SRC: {src} | Tar: {target}")
+
+    if not os.path.exists(src):
+        log.error(f"\tSource folder doesn't exist!")
+        SendLogs(3)
     
     if not os.path.exists(target):  # If target folder doesnt exist, create
-        os.mkdir(target)
+        try:
+            os.mkdir(target)
+        except:
+            log.error("\tUnable to create target folder!\n\n")
+            SendLogs(4, target)
 
     src_files = os.listdir(src)
     tar_files = os.listdir(target)
@@ -64,6 +77,7 @@ def compare_transfer_recursively(src, target): #(tested, working)
                 log.debug(f"\t\t\tCopying {src + f} to {target + f}")
             except:
                 log.error("Failed to copy file: {f}\n")
+                SendLogs(5, src+f)
 
     subdirs = next(os.walk(src))[1] #gives a list of immediate subdirectories
     for sub in subdirs:
@@ -76,7 +90,8 @@ def compare_transfer_recursively(src, target): #(tested, working)
 for date in DATE_CHK_LIST:
     SRC_DATE = SOURCE + "/" + date + "/"
     TAR_DATE = TARGET + "/" + date + "/"
-    log.debug(f"\n\n\n\n\nCalling Function on date: {SRC_DATE}")
+    log.info(f"\n\n\n\n\nCalling Function on date: {SRC_DATE}")
     compare_transfer_recursively(SRC_DATE, TAR_DATE)
 
 log.info("\n\n\n\n\nCompleted Transfer Successfully!\n\n\n\n\n\n\n\n")
+SendLogs(0)
