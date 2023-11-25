@@ -34,9 +34,9 @@ def SendLogs(code = 0, details = ""):
         else:
             body = "Unknown  Error Code!"
 
-    sender_email = "sender_email"
-    recipients = "my_email" + "," + MAIL_LIST #to add more recipients, continue string by comma and 2nd mail id in same string
-    password = "password"
+    sender_email = ""
+    recipients = "" + "," + MAIL_LIST #to add more recipients, continue string by comma and 2nd mail id in same string
+    password = ""
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
@@ -84,7 +84,11 @@ def SendLogs(code = 0, details = ""):
     s.starttls()
     s.ehlo()
     s.login(sender_email, password)
-    s.sendmail(message["From"], message["To"].split(","), text)
+    try:
+        s.sendmail(message["From"], message["To"].split(","), text)
+    except:
+        with open("MailFailed.log", "w") as f:
+            f.write(f"Failed to notify through mail!\nCheck your mail id {recipients} \nor run EditPaths program!")
     
     exit(code)
 
