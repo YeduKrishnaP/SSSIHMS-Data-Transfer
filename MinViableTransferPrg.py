@@ -1,6 +1,6 @@
 import os
 import shutil
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import logging as log
 from EmailClient import SendLogs
 
@@ -21,7 +21,7 @@ log.basicConfig(filename = f"./Logfiles/{date.today()}.log", level=log.DEBUG)
 log.info("--------------------------------------------------------------------------------------------------------------------------------------------------------")
 log.info("--------------------------------------------------------------------------------------------------------------------------------------------------------")
 log.info("--------------------------------------------------------------------------------------------------------------------------------------------------------\n\n\n\n\n\n\n")
-log.info("Starting Program")
+log.info(f"Starting Program at {datetime.now()}\n\n\n")
 
 try:
     with open("Paths.bin", "r") as f:
@@ -29,6 +29,7 @@ try:
         SOURCE = PATHS[0].replace("\\", "/").strip()    # Read existing paths in the file
         TARGET = PATHS[1].replace("\\", "/").strip()
         CHKDAYS = int(PATHS[2].strip())                 # Read the no. of days to check for
+
 except:
     log.error("Unable to read Paths.bin")
     SendLogs(1)
@@ -39,7 +40,7 @@ for i in range(1, CHKDAYS+1):
     DATE_CHK_LIST.append(p[5:7] + p[8:] + p[:4])# (mmddyyyy) - format in which IHMS stores files
 
 log.info(f"Dates to check: {DATE_CHK_LIST}")
-    
+
 #-----------------------------------------------------------------------------
 
 def compare_transfer_recursively(src, target): #(tested, working)
