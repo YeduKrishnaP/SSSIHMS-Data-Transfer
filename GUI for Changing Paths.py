@@ -9,7 +9,7 @@ def INIT_PATHS_FILE():
         
     
     """    
-    sg.theme('DarkAmber')
+    sg.theme('Topanga')
 
     SRC = ""
     DEST = ""
@@ -25,16 +25,16 @@ def INIT_PATHS_FILE():
 
 
     layout = [  [sg.Text('Change the Paths')],
-                [sg.Text('Source Folder:       '), sg.InputText(SRC, size=(200,1))],
-                [sg.Text('Destination Folder: '), sg.InputText(DEST, size=(200,1))],
-                [sg.Text('No. of days to check for consistency: '), sg.InputText(datesprompt, size = (700, 1))],
-                [sg.Text('Enter your email to receive notifications: '), sg.InputText(mailprompt, size = (700, 1))],
+                [sg.Text('Source Folder:       '), sg.InputText(SRC), sg.FolderBrowse()],
+                [sg.Text('Destination Folder: '), sg.InputText(DEST), sg.FolderBrowse()],
+                [sg.Text('No. of days to check for consistency: '), sg.InputText(datesprompt, size = (600, 1))],
+                [sg.Text('Enter your email to receive notifications: '), sg.InputText(mailprompt, size = (675, 1))],
                 [sg.Button('Ok'), sg.Button('Close')]
              ]
 
     # Create the Window
     window = sg.Window('Automated Data Transfer', layout,
-                       grab_anywhere = True, size = (800, 175))
+                       grab_anywhere = True, size = (750, 200))
 
     # Event Loop to process "events" and get the "values" of the inputs
     while True:
