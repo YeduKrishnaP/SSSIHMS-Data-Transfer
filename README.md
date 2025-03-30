@@ -1,4 +1,4 @@
-# SSSIHMS-Data-Transfer
+# SSSIHMS-Data-Transfer (Outdated Readme, will update soon ;) )
 Program to automatically backup contents of directory into given Target directory.
 
 ## Current implementation idea (partly scrapped):
@@ -13,13 +13,13 @@ Dependencies: `Shutil`, `OS`, `PySimpleGUI`
 Turns out a scheduled task that runs when the user is not logged in will be run in a separate environment by itself, which is hidden from the user.
 So, I came up with a Minimum Program that has no GUI and just executes the code with a logger facility, which sends mails to a given mail list with logs as attachments.
 
-- [ ] Need to come up with a solution for GUI T_T
+- [x] Need to come up with a solution for GUI
       Could be done with two processes. One that runs silently when the user is logged out, other that is run when the user logs in
       ****But, is a daily GUI even required when the email client sends notifications everyday?****
       
 Need to make the installation process user-friendly - Currently, the user needs to schedule the task manually etc. (trying out SCHTASKS)
 
-- [ ] Add option to browse and select the folder in EditPaths.py
+- [x] Add option to browse and select the folder in EditPaths.py
 
 ### To do:
 - [x] Happy Path and Minimum Viable Product
@@ -32,7 +32,7 @@ Need to make the installation process user-friendly - Currently, the user needs 
   - [x] Logic for no. of days to check (Given by user, Exceptions etc are handled)
   - [ ] Unit testing, End-to-end testing
   - [ ] Style check
-  - [ ] User Friendly installation (currently trying out SCHTASKS)
+  - [x] User Friendly installation (currently trying out SCHTASKS)
   
 - [ ] Post GA
   - [x] Logging facility (Need to make it better)
